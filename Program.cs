@@ -12,8 +12,11 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 builder.Services.AddDbContext<ApplcationDBContext>(options =>
 options.UseSqlite(builder.Configuration.GetConnectionString("SqliteConn"))
-    .LogTo(Console.WriteLine, LogLevel.Information)
+           .UseLoggerFactory(LoggerFactory.Create(builder => builder.AddConsole()
+           .SetMinimumLevel(LogLevel.Debug)))
 );
+
+
 builder.Services.AddCors(options =>
 {
     options.AddDefaultPolicy(
