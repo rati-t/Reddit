@@ -11,12 +11,11 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 builder.Services.AddDbContext<ApplcationDBContext>(options =>
-options.UseSqlite(builder.Configuration.GetConnectionString("SqliteConn"))
-           .UseLoggerFactory(LoggerFactory.Create(builder => builder.AddConsole()
-           .SetMinimumLevel(LogLevel.Debug)))
+    options.UseSqlite(builder.Configuration.GetConnectionString("SqliteConn"))
+              .UseLazyLoadingProxies()
+               .UseLoggerFactory(LoggerFactory.Create(builder => builder.AddConsole()
+               .SetMinimumLevel(LogLevel.Debug))).EnableSensitiveDataLogging()
 );
-
-
 builder.Services.AddCors(options =>
 {
     options.AddDefaultPolicy(
