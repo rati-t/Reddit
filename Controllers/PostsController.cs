@@ -1,6 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using Reddit;
 using Reddit.Dtos;
 using Reddit.Mapper;
 using Reddit.Models;
