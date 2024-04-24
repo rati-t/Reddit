@@ -21,9 +21,44 @@ namespace Reddit.Controllers
         }
 
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<Community>>> GetCommunities()
+        public async Task<ActionResult<IEnumerable<Community>>> GetCommunities(int pageNumber, int pageSize, bool isAscending, string? sortKey, string? searchKey)
         {
-            return await _context.Communities.ToListAsync();
+            IQueryable<Community> query;
+            if (searchKey != null)
+                query = _context.Communities.Where(c => c.Name.Contains(searchKey) || c.Description.Contains(searchKey));
+            else
+                query = _context.Communities;
+            if (sortKey != null)
+            {
+                if (isAscending)
+                {
+                    if (sortKey.ToLower() == "createdat")
+                        query = query.OrderBy(c => c.CreateAt);
+                    else if (sortKey.ToLower() == "postscount")
+                        query = query.OrderBy(c => c.Posts.Count);
+                    else if (sortKey.ToLower() == "subscriberscount")
+                        query = query.OrderBy(c => c.Subscribers.Count);
+                    else
+                        query = query.OrderBy(c => c.Id);
+                }else
+                {
+
+                    if (sortKey.ToLower() == "createdat")
+                        query = query.OrderByDescending(c => c.CreateAt);
+                    else if (sortKey.ToLower() == "postscount")
+                        query = query.OrderByDescending(c => c.Posts.Count);
+                    else if (sortKey.ToLower() == "subscriberscount")
+                        query = query.OrderByDescending(c => c.Subscribers.Count);
+                    else
+                        query = query.OrderByDescending(c => c.Id);
+                }
+            }
+            else
+            {
+                query = query.OrderBy(c => c.Id);
+            }
+            var result = await query.Skip(pageSize * pageNumber).Take(pageSize).ToListAsync();
+            return result;
         }
 
         [HttpGet("{id}")]
@@ -31,7 +66,7 @@ namespace Reddit.Controllers
         {
             var community = await _context.Communities.FindAsync(id);
 
-            if(community == null)
+            if (community == null)
             {
                 return NotFound();
             }
@@ -42,11 +77,11 @@ namespace Reddit.Controllers
         [HttpPost]
         public async Task<IActionResult> CreateCommunity(CreateCommunityDto communityDto)
         {
-                var community = _mapper.toCommunity(communityDto);
+            var community = _mapper.toCommunity(communityDto);
 
-                await _context.Communities.AddAsync(community);
-                await _context.SaveChangesAsync();
-                return Ok();
+            await _context.Communities.AddAsync(community);
+            await _context.SaveChangesAsync();
+            return Ok();
         }
 
         [HttpDelete("{id}")]
@@ -65,7 +100,7 @@ namespace Reddit.Controllers
         }
 
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutCommunity (int id, Community community)
+        public async Task<IActionResult> PutCommunity(int id, Community community)
         {
             if (!CommunityExists(id))
             {
