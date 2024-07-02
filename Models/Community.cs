@@ -6,6 +6,7 @@ namespace Reddit.Models
     public class Community
     {
         [Key]
+        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int Id { get; set; }
         public int? OwnerId { get; set; }
         public virtual User? Owner { get; set; }

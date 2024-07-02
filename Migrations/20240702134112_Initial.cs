@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace Reddit.Migrations
 {
     /// <inheritdoc />
-    public partial class Init : Migration
+    public partial class Initial : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -15,9 +15,9 @@ namespace Reddit.Migrations
                 name: "Users",
                 columns: table => new
                 {
-                    Id = table.Column<int>(type: "INTEGER", nullable: false)
-                        .Annotation("Sqlite:Autoincrement", true),
-                    Name = table.Column<string>(type: "TEXT", nullable: false)
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Name = table.Column<string>(type: "nvarchar(max)", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -28,12 +28,12 @@ namespace Reddit.Migrations
                 name: "Communities",
                 columns: table => new
                 {
-                    Id = table.Column<int>(type: "INTEGER", nullable: false)
-                        .Annotation("Sqlite:Autoincrement", true),
-                    OwnerId = table.Column<int>(type: "INTEGER", nullable: true),
-                    Name = table.Column<string>(type: "TEXT", nullable: false),
-                    Description = table.Column<string>(type: "TEXT", nullable: false),
-                    CreateAt = table.Column<DateTime>(type: "TEXT", nullable: false)
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    OwnerId = table.Column<int>(type: "int", nullable: true),
+                    Name = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Description = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    CreateAt = table.Column<DateTime>(type: "datetime2", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -47,23 +47,23 @@ namespace Reddit.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "CommunitySubscriptions",
+                name: "CommunityUser",
                 columns: table => new
                 {
-                    SubscribedCommunitiesId = table.Column<int>(type: "INTEGER", nullable: false),
-                    SubscribersId = table.Column<int>(type: "INTEGER", nullable: false)
+                    SubscribedCommunitiesId = table.Column<int>(type: "int", nullable: false),
+                    SubscribersId = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_CommunitySubscriptions", x => new { x.SubscribedCommunitiesId, x.SubscribersId });
+                    table.PrimaryKey("PK_CommunityUser", x => new { x.SubscribedCommunitiesId, x.SubscribersId });
                     table.ForeignKey(
-                        name: "FK_CommunitySubscriptions_Communities_SubscribedCommunitiesId",
+                        name: "FK_CommunityUser_Communities_SubscribedCommunitiesId",
                         column: x => x.SubscribedCommunitiesId,
                         principalTable: "Communities",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "FK_CommunitySubscriptions_Users_SubscribersId",
+                        name: "FK_CommunityUser_Users_SubscribersId",
                         column: x => x.SubscribersId,
                         principalTable: "Users",
                         principalColumn: "Id",
@@ -74,16 +74,16 @@ namespace Reddit.Migrations
                 name: "Posts",
                 columns: table => new
                 {
-                    Id = table.Column<int>(type: "INTEGER", nullable: false)
-                        .Annotation("Sqlite:Autoincrement", true),
-                    Title = table.Column<string>(type: "TEXT", nullable: false),
-                    Content = table.Column<string>(type: "TEXT", nullable: false),
-                    AuthorId = table.Column<int>(type: "INTEGER", nullable: true),
-                    Upvotes = table.Column<int>(type: "INTEGER", nullable: false),
-                    Downvotes = table.Column<int>(type: "INTEGER", nullable: false),
-                    CreateAt = table.Column<DateTime>(type: "TEXT", nullable: false),
-                    UpdatedAt = table.Column<DateTime>(type: "TEXT", nullable: true),
-                    CommunityId = table.Column<int>(type: "INTEGER", nullable: false)
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Title = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Content = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    AuthorId = table.Column<int>(type: "int", nullable: true),
+                    Upvotes = table.Column<int>(type: "int", nullable: false),
+                    Downvotes = table.Column<int>(type: "int", nullable: false),
+                    CreateAt = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    UpdatedAt = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    CommunityId = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -105,9 +105,9 @@ namespace Reddit.Migrations
                 name: "Comments",
                 columns: table => new
                 {
-                    Id = table.Column<int>(type: "INTEGER", nullable: false)
-                        .Annotation("Sqlite:Autoincrement", true),
-                    PostId = table.Column<int>(type: "INTEGER", nullable: true)
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    PostId = table.Column<int>(type: "int", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -130,8 +130,8 @@ namespace Reddit.Migrations
                 column: "OwnerId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_CommunitySubscriptions_SubscribersId",
-                table: "CommunitySubscriptions",
+                name: "IX_CommunityUser_SubscribersId",
+                table: "CommunityUser",
                 column: "SubscribersId");
 
             migrationBuilder.CreateIndex(
@@ -152,7 +152,7 @@ namespace Reddit.Migrations
                 name: "Comments");
 
             migrationBuilder.DropTable(
-                name: "CommunitySubscriptions");
+                name: "CommunityUser");
 
             migrationBuilder.DropTable(
                 name: "Posts");
