@@ -44,5 +44,5 @@ jobs:
       uses: azure/webapps-deploy@v2
       with:
         app-name: ${{ env.AZURE_WEBAPP_NAME }}
-        publish-profile: ${{ secrets.Reddit20240702153717_1A33 }}
+        publish-profile: ${{ secrets.Reddit20240702153717_6E7F }}
         package: ${{ env.AZURE_WEBAPP_PACKAGE_PATH }}
