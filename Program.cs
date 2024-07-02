@@ -16,7 +16,7 @@ builder.Services.AddControllers()
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 builder.Services.AddDbContext<ApplicationDbContext>(options => {
-    options.UseSqlite(builder.Configuration.GetConnectionString("SqliteDb"));
+    options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"));
     options.UseLazyLoadingProxies();
     options.LogTo(Console.WriteLine, LogLevel.Information);
     options.EnableSensitiveDataLogging();
